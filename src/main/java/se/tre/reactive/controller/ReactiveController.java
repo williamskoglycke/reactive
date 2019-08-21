@@ -9,6 +9,8 @@ import se.tre.reactive.infrastructure.ExampleRemoteService;
 import se.tre.reactive.infrastructure.PersonService;
 import se.tre.reactive.infrastructure.PuppyService;
 
+import java.util.List;
+
 @RestController
 public class ReactiveController {
 
@@ -43,6 +45,17 @@ public class ReactiveController {
 
     @GetMapping("/reactive/owner2")
     public Mono<Owner> getOwnerAfterEachOther() {
+
+        return null;
+
+    }
+
+    /**
+     * @return Owners with one dog that got one pup (After each other)
+     */
+
+    @GetMapping("/reactive/owner3")
+    public Mono<List<Owner>> getOwnersAfterEachOther() {
 
         return null;
 

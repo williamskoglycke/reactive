@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple3;
 import se.tre.reactive.domain.Dog;
@@ -17,6 +18,8 @@ import se.tre.reactive.domain.owner.MotherDog;
 import se.tre.reactive.infrastructure.DogService;
 import se.tre.reactive.infrastructure.PersonService;
 import se.tre.reactive.infrastructure.PuppyService;
+
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -32,7 +35,7 @@ public class DogTest {
     DogService dogService;
 
     @Test
-    public void showImperativeStyle_afterEachOther() {
+    public void forOwner1() {
 
         final Puppy puppyBlock = puppyService.getReactivePuppy().block();
         final Person personBlock = personService.getReactivePerson().block();
@@ -50,7 +53,7 @@ public class DogTest {
     }
 
     @Test
-    public void showImperativeStyle_concurrent() {
+    public void forOwner2() {
 
         final Puppy puppyBlock = puppyService.getReactivePuppy().block();
         final Person personBlock = personService.getReactivePerson().block();
@@ -75,6 +78,33 @@ public class DogTest {
         ).block();
 
         Assert.assertEquals(owner, ownerBlock);
+
+    }
+
+    @Test
+    public void forOwner3() {
+
+        final Puppy puppyBlock = puppyService.getReactivePuppy().block();
+        final Person personBlock = personService.getReactivePerson().block();
+        final Dog dogBlock = dogService.getReactiveDog().block();
+
+        final List<Owner> owners = List.of(
+                new Owner(personBlock.getName(), new MotherDog(dogBlock.getName(), new PuppyWithMother(puppyBlock.getName()))),
+                new Owner(personBlock.getName(), new MotherDog(dogBlock.getName(), new PuppyWithMother(puppyBlock.getName())))
+        );
+
+        final List<Owner> ownersBlock = personService.getReactivePeople().flatMap(
+                people -> Flux.fromIterable(people).flatMap(
+                        person -> dogService.getReactiveDog().flatMap(
+                                dog -> puppyService.getReactivePuppy().map(
+                                        puppy -> new Owner(person.getName(), new MotherDog(dog.getName(), new PuppyWithMother(puppy.getName())))
+                                )
+                        )
+                ).collectList()
+        ).block();
+
+
+        Assert.assertEquals(owners, ownersBlock);
 
     }
 

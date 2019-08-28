@@ -11,12 +11,21 @@ import se.tre.reactive.config.ApplicationConfiguration;
 @SpringBootApplication
 @Import(ApplicationConfiguration.class)
 @ComponentScan(basePackages = "se.tre.reactive",
-		excludeFilters = {
-				@ComponentScan.Filter(type = FilterType.ANNOTATION, value = Configuration.class)})
+        excludeFilters = {
+                @ComponentScan.Filter(type = FilterType.ANNOTATION, value = Configuration.class)})
 public class ReactiveApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ReactiveApplication.class, args);
-	}
+    public static void main(String[] args) {
+
+        //Streams (Lazy, Once)
+
+        //Mono 0...1 (CompletableFuture)
+
+        //Flux 0...n
+
+        SpringApplication.run(ReactiveApplication.class, args);
+
+    }
+
 
 }
